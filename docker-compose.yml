@@ -51,6 +51,21 @@ services:
     networks:
       - plexor-network
 
+  phpmyadmin:
+    image: phpmyadmin:5
+    container_name: plexor-phpmyadmin
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: plexor
+      MYSQL_USER: plexor
+      MYSQL_PASSWORD: plexor
+    ports:
+      - "8080:80"
+    networks:
+      - plexor-network
+    depends_on:
+        - db
+
   vite:
     image: node:20-alpine
     container_name: plexor-vite

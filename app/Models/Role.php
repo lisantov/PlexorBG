@@ -2,26 +2,20 @@
 
 namespace App\Models;
 
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
-use Illuminate\Foundation\Auth\User as Authenticatable;
 
 #[Table(key: 'id', keyType: 'string', incrementing: false)]
-#[Fillable(['login', 'email', 'password_hash', 'created_at'])]
-#[Hidden(['password_hash'])]
-class User extends Authenticatable
+#[Fillable(['name', 'access_codes'])]
+class Role extends Model
 {
     use HasUuids;
-    /** @use HasFactory<UserFactory> */
-    use HasFactory;
 
     public function requests(): MorphMany {
-        return $this->morphMany(Request::class, 'object')
+        return $this->morphMany(Request::class, 'object');
     }
 
     /**
@@ -32,8 +26,7 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password_hash' => 'hashed',
-            'created_at' => 'timestamp',
+            'access_codes' => 'array',
         ];
     }
 }

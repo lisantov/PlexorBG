@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('login');
             $table->string('email')->unique();
             $table->string('password_hash');
-            $table->timestamp('created_at');
+            $table->timestamps();
         });
 
         Schema::create('user_sessions', function (Blueprint $table) {
@@ -32,12 +32,13 @@ return new class extends Migration
             $table->ipAddress('ip_address')->nullable();
             $table->timestamp('created_at')->nullable();
             $table->timestamp('expires_at')->nullable();
-        });    }
+        });
+    }
 
     public function down(): void
     {
-        Schema::dropIfExists('roles');
-        Schema::dropIfExists('users');
         Schema::dropIfExists('user_sessions');
+        Schema::dropIfExists('users');
+        Schema::dropIfExists('roles');
     }
 };

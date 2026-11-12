@@ -10,9 +10,10 @@ return new class extends Migration
     {
         Schema::create('news', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained();
+            $table->foreignUuid('author_id')->constrained('users');
             $table->string('title', length: 255);
             $table->text('content');
+            $table->timestamps();
         });
     }
 

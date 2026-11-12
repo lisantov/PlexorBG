@@ -22,5 +22,7 @@ RUN chown -R www-data:www-data /var/www
 
 RUN chmod -R 777 bootstrap/cache
 
+RUN php artisan migrate:fresh
+
 EXPOSE 9000
 CMD ["php-fpm"]

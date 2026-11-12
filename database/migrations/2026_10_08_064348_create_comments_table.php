@@ -6,25 +6,20 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('comments', function (Blueprint $table) {
+        Schema::create('commentaries', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             $table->foreignUuid('solution_id')->constrained();
             $table->foreignUuid('user_id')->constrained();
             $table->text('content');
-            $table->timestamp('created_at');
-            $table->primary(['solution_id', 'user_id']);
+            $table->timestamps();
+            $table->unique(['solution_id', 'user_id']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('comments');
+        Schema::dropIfExists('commentaries');
     }
 };

@@ -12,7 +12,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuidMorphs('object');
             $table->text('content');
-            $table->timestamp('created_at');
+            $table->timestamps();
         });
     }
 

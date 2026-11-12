@@ -15,7 +15,8 @@ return new class extends Migration
             $table->string('description', length: 255);
             $table->text('content');
             $table->text('answer');
-            $table->enum('status', ['CREATED', 'APPROVED']);
+            $table->enum('status', ['CREATED', 'APPROVED', 'REJECTED'])->default('CREATED');
+            $table->timestamps();
         });
     }
 

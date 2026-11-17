@@ -23,21 +23,10 @@ return new class extends Migration
             $table->string('password_hash');
             $table->timestamps();
         });
-
-        Schema::create('user_sessions', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained();
-            $table->string('refresh_token');
-            $table->string('device_info')->nullable();
-            $table->ipAddress('ip_address')->nullable();
-            $table->timestamp('created_at')->nullable();
-            $table->timestamp('expires_at')->nullable();
-        });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('user_sessions');
         Schema::dropIfExists('users');
         Schema::dropIfExists('roles');
     }

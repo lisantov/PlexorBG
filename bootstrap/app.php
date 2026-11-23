@@ -15,9 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->redirectGuestsTo(route('login'));
+        $middleware->redirectGuestsTo(fn () => route('login'));
 
-        $middleware->redirectUsersTo(route('dashboard'));
+        $middleware->redirectUsersTo(fn () => route('dashboard'));
 
 
         $middleware->encryptCookies(except: ['appearance', 'sidebar_state']);

@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Table(key: 'id', keyType: 'string', incrementing: false, timestamps: false)]
-#[Fillable(['name', 'access_codes'])]
+#[Fillable(['name'])]
 class Role extends Model
 {
     use HasFactory;
@@ -19,17 +19,5 @@ class Role extends Model
     public function users(): HasMany
     {
         return $this->hasMany(User::class);
-    }
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'access_codes' => 'array',
-        ];
     }
 }

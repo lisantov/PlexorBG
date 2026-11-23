@@ -11,7 +11,6 @@ class RoleFactory extends Factory
     {
         return [
             'name' => fake()->unique()->word(),
-            'access_codes' => [],
         ];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Settings;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Concerns\PasswordValidationRules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Password;
 
@@ -10,10 +10,13 @@ class PasswordUpdateRequest extends FormRequest
 {
     use PasswordValidationRules;
 
+    public function authorize(): bool
+    {
+        return true;
+    }
+
     /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {

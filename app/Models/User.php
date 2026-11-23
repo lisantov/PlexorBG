@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
 #[Table(key: 'id', keyType: 'string', incrementing: false)]
-#[Fillable(['login', 'email', 'password_hash'])]
+#[Fillable(['role_id', 'login', 'email', 'password_hash'])]
 #[Hidden(['password_hash'])]
 class User extends Authenticatable
 {

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, LayoutGrid } from '@lucide/vue';
+import { BookOpen, FolderGit2, Home, ListTodo, Newspaper, User } from '@lucide/vue';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -14,14 +14,32 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { home } from '@/routes';
+import { index as news } from '@/routes/news';
+import { index as profile } from '@/routes/profile';
+import { index as trainers } from '@/routes/trainers';
 import type { NavItem } from '@/types';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+        title: 'Главная',
+        href: home(),
+        icon: Home,
+    },
+    {
+        title: 'Новости',
+        href: news(),
+        icon: Newspaper,
+    },
+    {
+        title: 'Тренажёры',
+        href: trainers(),
+        icon: ListTodo,
+    },
+    {
+        title: 'Профиль',
+        href: profile(),
+        icon: User,
     },
 ];
 
@@ -45,7 +63,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link :href="home()">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

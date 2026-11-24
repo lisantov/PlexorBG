@@ -35,7 +35,10 @@ import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl } from '@/lib/utils';
-import { dashboard } from '@/routes';
+import { home } from '@/routes';
+import { index as news } from '@/routes/news';
+import { index as profile } from '@/routes/profile';
+import { index as trainers } from '@/routes/trainers';
 import type { BreadcrumbItem, NavItem } from '@/types';
 
 type Props = {
@@ -55,9 +58,24 @@ const activeItemStyles =
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
+        title: 'Главная',
+        href: home(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Новости',
+        href: news(),
+        icon: Folder,
+    },
+    {
+        title: 'Тренажёры',
+        href: trainers(),
+        icon: BookOpen,
+    },
+    {
+        title: 'Профиль',
+        href: profile(),
+        icon: Menu,
     },
 ];
 
@@ -146,7 +164,7 @@ const rightNavItems: NavItem[] = [
                     </Sheet>
                 </div>
 
-                <Link :href="dashboard()" class="flex items-center gap-x-2">
+                <Link :href="home()" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 

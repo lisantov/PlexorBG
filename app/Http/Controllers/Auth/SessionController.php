@@ -32,13 +32,13 @@ class SessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('home'));
     }
 
     public function destroy(Request $request): RedirectResponse
     {
         $this->authentication->logout($request);
 
-        return redirect()->route('home');
+        return redirect()->route('welcome');
     }
 }

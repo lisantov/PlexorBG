@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\TrainerController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -11,4 +12,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('news/{news}/edit', [NewsController::class, 'edit'])->name('news.edit');
     Route::put('news/{news}', [NewsController::class, 'update'])->name('news.update');
     Route::delete('news/{news}', [NewsController::class, 'destroy'])->name('news.destroy');
+
+    Route::get('trainers/create', [TrainerController::class, 'create'])->name('trainers.create');
+    Route::post('trainers', [TrainerController::class, 'store'])->name('trainers.store');
 });

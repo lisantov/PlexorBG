@@ -10,6 +10,7 @@ import {
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
 import { create as adminNewsCreate } from '@/routes/admin/news';
+import { create as adminTrainerCreate } from '@/routes/admin/trainers';
 import { home, login, register } from '@/routes';
 import { index as news } from '@/routes/news';
 import { index as trainers } from '@/routes/trainers';
@@ -46,7 +47,14 @@ const navLinkClass = (href: LinkComponentBaseProps['href']) =>
                     :href="adminNewsCreate()"
                     :class="navLinkClass(adminNewsCreate())"
                 >
-                    Админ
+                    + Новость
+                </Link>
+                <Link
+                    v-if="auth.isAdmin"
+                    :href="adminTrainerCreate()"
+                    :class="navLinkClass(adminTrainerCreate())"
+                >
+                    + Тренажёр
                 </Link>
             </nav>
 
@@ -91,7 +99,10 @@ const navLinkClass = (href: LinkComponentBaseProps['href']) =>
                         <Link :href="news()">Новости</Link>
                         <Link :href="trainers()">Тренажёры</Link>
                         <Link v-if="auth.isAdmin" :href="adminNewsCreate()">
-                            Админ
+                            + Новость
+                        </Link>
+                        <Link v-if="auth.isAdmin" :href="adminTrainerCreate()">
+                            + Тренажёр
                         </Link>
                     </div>
                 </details>

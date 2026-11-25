@@ -37,10 +37,12 @@ class Task extends Model
         return $this->hasMany(SolutionSession::class);
     }
 
-    public function casts(): array
+    protected function casts(): array
     {
         return [
             'status' => TaskStatus::class,
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
         ];
     }
 }

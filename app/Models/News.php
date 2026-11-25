@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 #[Table(key: 'id', keyType: 'string', incrementing: false)]
 #[Fillable(['author_id', 'title', 'content'])]
@@ -28,5 +29,10 @@ class News extends Model
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Commentary::class, 'commentable');
     }
 }

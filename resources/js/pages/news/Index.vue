@@ -2,6 +2,7 @@
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import { create, edit } from '@/routes/admin/news';
+import { show } from '@/routes/news';
 import type { NewsListItem } from '@/types/news';
 
 type Props = {
@@ -40,22 +41,29 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                 class="space-y-2 px-4 py-4 text-sm"
             >
                 <div class="flex flex-wrap items-baseline justify-between gap-2">
-                    <div class="flex flex-wrap gap-x-2 gap-y-1">
-                        <span class="font-medium">{{ item.title }}</span>
-                        <span
-                            v-if="item.created_at"
-                            class="text-muted-foreground text-xs"
+                    <div class="space-y-1">
+                        <Link
+                            :href="show(item.id)"
+                            class="font-medium underline-offset-4 hover:underline"
                         >
-                            {{
-                                new Date(item.created_at).toLocaleDateString()
-                            }}
-                        </span>
-                        <span
-                            v-if="item.author"
-                            class="text-muted-foreground text-xs"
-                        >
-                            {{ item.author }}
-                        </span>
+                            {{ item.title }}
+                        </Link>
+                        <p class="text-muted-foreground text-xs">
+                            <span v-if="item.author">{{ item.author }}</span>
+                            <span v-if="item.created_at" class="ml-2">
+                                {{
+                                    new Date(
+                                        item.created_at,
+                                    ).toLocaleDateString()
+                                }}
+                            </span>
+                            <span
+                                v-if="item.comments_count !== undefined"
+                                class="ml-2"
+                            >
+                                · {{ item.comments_count }} комм.
+                            </span>
+                        </p>
                     </div>
                     <Link
                         v-if="isAdmin"
@@ -65,7 +73,7 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                         Изменить
                     </Link>
                 </div>
-                <p class="text-muted-foreground whitespace-pre-wrap">
+                <p class="text-muted-foreground line-clamp-3 whitespace-pre-wrap">
                     {{ item.content }}
                 </p>
             </li>

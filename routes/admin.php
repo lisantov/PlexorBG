@@ -15,4 +15,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
     Route::get('trainers/create', [TrainerController::class, 'create'])->name('trainers.create');
     Route::post('trainers', [TrainerController::class, 'store'])->name('trainers.store');
+    Route::get('trainers/{task}/edit', [TrainerController::class, 'edit'])->name('trainers.edit');
+    Route::put('trainers/{task}', [TrainerController::class, 'update'])->name('trainers.update');
+    Route::delete('trainers/{task}', [TrainerController::class, 'destroy'])->name('trainers.destroy');
 });

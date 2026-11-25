@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { Head, Link } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { edit } from '@/routes/admin/trainers';
 import { index as trainersIndex } from '@/routes/trainers';
 import type { TrainerDetail } from '@/types/trainer';
 
@@ -8,6 +10,9 @@ type Props = {
 };
 
 defineProps<Props>();
+
+const page = usePage();
+const isAdmin = computed(() => page.props.auth.isAdmin);
 </script>
 
 <template>
@@ -29,6 +34,13 @@ defineProps<Props>();
             >
                 {{ trainer.content }}
             </section>
+            <Link
+                v-if="isAdmin"
+                :href="edit(trainer.id)"
+                class="text-muted-foreground text-xs underline"
+            >
+                Редактировать
+            </Link>
         </article>
 
         <section class="space-y-3 border-t border-border pt-6">

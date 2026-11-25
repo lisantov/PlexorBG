@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { create as adminTrainerCreate } from '@/routes/admin/trainers';
+import { create as adminTrainerCreate, edit } from '@/routes/admin/trainers';
 import { show } from '@/routes/trainers';
 import type { TrainerListItem } from '@/types/trainer';
 
@@ -40,12 +40,21 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                 :key="item.id"
                 class="space-y-1 px-4 py-3"
             >
-                <Link
-                    :href="show(item.id)"
-                    class="font-medium underline-offset-4 hover:underline"
-                >
-                    {{ item.title }}
-                </Link>
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <Link
+                        :href="show(item.id)"
+                        class="font-medium underline-offset-4 hover:underline"
+                    >
+                        {{ item.title }}
+                    </Link>
+                    <Link
+                        v-if="isAdmin"
+                        :href="edit(item.id)"
+                        class="text-muted-foreground text-xs underline"
+                    >
+                        Изменить
+                    </Link>
+                </div>
                 <p class="text-muted-foreground text-xs">
                     {{ item.description }}
                 </p>

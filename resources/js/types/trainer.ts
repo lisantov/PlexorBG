@@ -8,3 +8,10 @@ export type TrainerListItem = {
 export type TrainerDetail = TrainerListItem & {
     content: string;
 };
+
+export type TrainerAdminFields = Pick<
+    TrainerDetail,
+    'id' | 'title' | 'description' | 'content'
+> & {
+    answer: string;
+};

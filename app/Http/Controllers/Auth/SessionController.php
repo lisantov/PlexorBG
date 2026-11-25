@@ -39,6 +39,6 @@ class SessionController extends Controller
     {
         $this->authentication->logout($request);
 
-        return redirect()->route('welcome');
+        return redirect()->route('home');
     }
 }

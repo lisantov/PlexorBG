@@ -14,6 +14,17 @@ class News extends Model
 {
     use HasUuids;
 
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'created_at' => 'immutable_datetime',
+            'updated_at' => 'immutable_datetime',
+        ];
+    }
+
     public function author(): BelongsTo
     {
         return $this->belongsTo(User::class, 'author_id');

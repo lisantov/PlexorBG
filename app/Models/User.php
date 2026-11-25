@@ -29,6 +29,13 @@ class User extends Authenticatable
         return $this->morphMany(Request::class, 'object');
     }
 
+    public function isAdmin(): bool
+    {
+        $this->loadMissing('role');
+
+        return $this->role?->name === 'Admin';
+    }
+
     public function getAuthPasswordName(): string
     {
         return 'password_hash';

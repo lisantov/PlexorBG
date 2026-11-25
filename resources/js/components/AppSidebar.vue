@@ -1,6 +1,16 @@
 <script setup lang="ts">
-import { Link } from '@inertiajs/vue3';
-import { BookOpen, FolderGit2, Home, ListTodo, Newspaper, User } from '@lucide/vue';
+import { Link, usePage } from '@inertiajs/vue3';
+import {
+    BookOpen,
+    FolderGit2,
+    Home,
+    ListTodo,
+    Newspaper,
+    Shield,
+    User,
+} from '@lucide/vue';
+import { computed } from 'vue';
+import { create as adminNewsCreate } from '@/routes/admin/news';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -20,28 +30,42 @@ import { index as profile } from '@/routes/profile';
 import { index as trainers } from '@/routes/trainers';
 import type { NavItem } from '@/types';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Главная',
-        href: home(),
-        icon: Home,
-    },
-    {
-        title: 'Новости',
-        href: news(),
-        icon: Newspaper,
-    },
-    {
-        title: 'Тренажёры',
-        href: trainers(),
-        icon: ListTodo,
-    },
-    {
-        title: 'Профиль',
-        href: profile(),
-        icon: User,
-    },
-];
+const page = usePage();
+
+const mainNavItems = computed<NavItem[]>(() => {
+    const items: NavItem[] = [
+        {
+            title: 'Главная',
+            href: home(),
+            icon: Home,
+        },
+        {
+            title: 'Новости',
+            href: news(),
+            icon: Newspaper,
+        },
+        {
+            title: 'Тренажёры',
+            href: trainers(),
+            icon: ListTodo,
+        },
+        {
+            title: 'Профиль',
+            href: profile(),
+            icon: User,
+        },
+    ];
+
+    if (page.props.auth.isAdmin) {
+        items.push({
+            title: 'Админ: новость',
+            href: adminNewsCreate(),
+            icon: Shield,
+        });
+    }
+
+    return items;
+});
 
 const footerNavItems: NavItem[] = [
     {

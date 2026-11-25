@@ -1,34 +1,62 @@
 <script setup lang="ts">
-import { Head } from '@inertiajs/vue3';
-import { index as newsIndex } from '@/routes/news';
+import { Head, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { create } from '@/routes/admin/news';
+import type { NewsListItem } from '@/types/news';
 
-const items = [
-    { id: '1', title: 'Новость 1', date: '2026-11-01' },
-    { id: '2', title: 'Новость 2', date: '2026-11-10' },
-    { id: '3', title: 'Новость 3', date: '2026-11-20' },
-];
+type Props = {
+    items: NewsListItem[];
+};
 
-defineOptions({
-    layout: {
-        breadcrumbs: [{ title: 'Новости', href: newsIndex() }],
-    },
-});
+defineProps<Props>();
+
+const page = usePage();
+const isAdmin = computed(() => page.props.auth.isAdmin);
 </script>
 
 <template>
     <Head title="Новости" />
 
-    <div class="flex flex-col gap-4 p-2">
-        <h1 class="text-2xl font-semibold">Новости</h1>
-        <p class="text-muted-foreground">Список-заглушка. API не подключён.</p>
-        <ul class="divide-y rounded-md border">
+    <div class="mx-auto max-w-3xl px-4 py-10">
+        <div class="mb-6 flex items-center justify-between gap-2">
+            <h1 class="text-2xl font-semibold">Новости</h1>
+            <Link
+                v-if="isAdmin"
+                :href="create()"
+                class="text-sm text-muted-foreground underline"
+            >
+                Добавить
+            </Link>
+        </div>
+
+        <p v-if="items.length === 0" class="text-muted-foreground text-sm">
+            Пока нет новостей.
+        </p>
+
+        <ul v-else class="divide-y divide-border border border-border">
             <li
                 v-for="item in items"
                 :key="item.id"
-                class="px-4 py-3 text-sm"
+                class="space-y-2 px-4 py-4 text-sm"
             >
-                <span class="font-medium">{{ item.title }}</span>
-                <span class="ml-2 text-muted-foreground">{{ item.date }}</span>
+                <div class="flex flex-wrap gap-x-2 gap-y-1">
+                    <span class="font-medium">{{ item.title }}</span>
+                    <span
+                        v-if="item.created_at"
+                        class="text-muted-foreground text-xs"
+                    >
+                        {{ new Date(item.created_at).toLocaleDateString() }}
+                    </span>
+                    <span
+                        v-if="item.author"
+                        class="text-muted-foreground text-xs"
+                    >
+                        {{ item.author }}
+                    </span>
+                </div>
+                <p class="text-muted-foreground whitespace-pre-wrap">
+                    {{ item.content }}
+                </p>
             </li>
         </ul>
     </div>

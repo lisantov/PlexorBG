@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
-import { create } from '@/routes/admin/news';
+import { create, edit } from '@/routes/admin/news';
 import type { NewsListItem } from '@/types/news';
 
 type Props = {
@@ -39,20 +39,31 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                 :key="item.id"
                 class="space-y-2 px-4 py-4 text-sm"
             >
-                <div class="flex flex-wrap gap-x-2 gap-y-1">
-                    <span class="font-medium">{{ item.title }}</span>
-                    <span
-                        v-if="item.created_at"
-                        class="text-muted-foreground text-xs"
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <div class="flex flex-wrap gap-x-2 gap-y-1">
+                        <span class="font-medium">{{ item.title }}</span>
+                        <span
+                            v-if="item.created_at"
+                            class="text-muted-foreground text-xs"
+                        >
+                            {{
+                                new Date(item.created_at).toLocaleDateString()
+                            }}
+                        </span>
+                        <span
+                            v-if="item.author"
+                            class="text-muted-foreground text-xs"
+                        >
+                            {{ item.author }}
+                        </span>
+                    </div>
+                    <Link
+                        v-if="isAdmin"
+                        :href="edit(item.id)"
+                        class="text-muted-foreground text-xs underline"
                     >
-                        {{ new Date(item.created_at).toLocaleDateString() }}
-                    </span>
-                    <span
-                        v-if="item.author"
-                        class="text-muted-foreground text-xs"
-                    >
-                        {{ item.author }}
-                    </span>
+                        Изменить
+                    </Link>
                 </div>
                 <p class="text-muted-foreground whitespace-pre-wrap">
                     {{ item.content }}

@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import { Form } from '@inertiajs/vue3';
 import { ref } from 'vue';
-import CommentaryController from '@/actions/App/Http/Controllers/News/CommentaryController';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import type { CommentNode } from '@/types/comment';
+import type { InertiaFormComponentProps } from '@inertiajs/vue3';
 
 type Props = {
     comments: CommentNode[];
-    newsId: string;
+    commentForm: InertiaFormComponentProps;
     canReply: boolean;
     depth?: number;
 };
@@ -53,7 +53,7 @@ function toggleReply(id: string) {
 
             <Form
                 v-if="canReply && replyToId === comment.id"
-                v-bind="CommentaryController.store.form(newsId)"
+                v-bind="commentForm"
                 reset-on-success
                 class="flex flex-col gap-2"
                 v-slot="{ errors, processing }"
@@ -77,7 +77,7 @@ function toggleReply(id: string) {
             <CommentThread
                 v-if="comment.children.length"
                 :comments="comment.children"
-                :news-id="newsId"
+                :comment-form="commentForm"
                 :can-reply="canReply"
                 :depth="depth + 1"
             />

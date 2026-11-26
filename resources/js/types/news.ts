@@ -1,3 +1,5 @@
+import type { LikeMeta } from '@/types/likeable';
+
 export type NewsListItem = {
     id: string;
     title: string;
@@ -5,9 +7,15 @@ export type NewsListItem = {
     author: string | null;
     created_at: string | null;
     comments_count?: number;
-};
+} & LikeMeta;
 
 export type NewsDetail = Pick<
     NewsListItem,
-    'id' | 'title' | 'content' | 'author' | 'created_at'
+    | 'id'
+    | 'title'
+    | 'content'
+    | 'author'
+    | 'created_at'
+    | 'likes_count'
+    | 'liked'
 >;

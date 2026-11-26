@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\TaskStatus;
+use App\Models\Concerns\Likeable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -16,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Task extends Model
 {
     use HasUuids;
+    use Likeable;
 
     public function requests(): MorphMany
     {
@@ -35,6 +37,11 @@ class Task extends Model
     public function solutionSessions(): HasMany
     {
         return $this->hasMany(SolutionSession::class);
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Commentary::class, 'commentable');
     }
 
     protected function casts(): array

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import NewsLikeController from '@/actions/App/Http/Controllers/News/LikeController';
+import LikeButton from '@/components/LikeButton.vue';
 import { create, edit } from '@/routes/admin/news';
 import { show } from '@/routes/news';
 import type { NewsListItem } from '@/types/news';
@@ -13,6 +15,7 @@ defineProps<Props>();
 
 const page = usePage();
 const isAdmin = computed(() => page.props.auth.isAdmin);
+const user = computed(() => page.props.auth.user);
 </script>
 
 <template>
@@ -65,13 +68,23 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                             </span>
                         </p>
                     </div>
-                    <Link
-                        v-if="isAdmin"
-                        :href="edit(item.id)"
-                        class="text-muted-foreground text-xs underline"
-                    >
-                        Изменить
-                    </Link>
+                    <div class="flex items-center gap-3">
+                        <LikeButton
+                            :likes_count="item.likes_count"
+                            :liked="item.liked"
+                            :can-like="!!user"
+                            :like-form="
+                                NewsLikeController.toggle.form(item.id)
+                            "
+                        />
+                        <Link
+                            v-if="isAdmin"
+                            :href="edit(item.id)"
+                            class="text-muted-foreground text-xs underline"
+                        >
+                            Изменить
+                        </Link>
+                    </div>
                 </div>
                 <p class="text-muted-foreground line-clamp-3 whitespace-pre-wrap">
                     {{ item.content }}

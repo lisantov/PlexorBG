@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import TrainerLikeController from '@/actions/App/Http/Controllers/Trainers/LikeController';
+import LikeButton from '@/components/LikeButton.vue';
 import { create as adminTrainerCreate, edit } from '@/routes/admin/trainers';
 import { show } from '@/routes/trainers';
 import type { TrainerListItem } from '@/types/trainer';
@@ -13,6 +15,7 @@ defineProps<Props>();
 
 const page = usePage();
 const isAdmin = computed(() => page.props.auth.isAdmin);
+const user = computed(() => page.props.auth.user);
 </script>
 
 <template>
@@ -47,16 +50,32 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                     >
                         {{ item.title }}
                     </Link>
-                    <Link
-                        v-if="isAdmin"
-                        :href="edit(item.id)"
-                        class="text-muted-foreground text-xs underline"
-                    >
-                        Изменить
-                    </Link>
+                    <div class="flex items-center gap-3">
+                        <LikeButton
+                            :likes_count="item.likes_count"
+                            :liked="item.liked"
+                            :can-like="!!user"
+                            :like-form="
+                                TrainerLikeController.toggle.form(item.id)
+                            "
+                        />
+                        <Link
+                            v-if="isAdmin"
+                            :href="edit(item.id)"
+                            class="text-muted-foreground text-xs underline"
+                        >
+                            Изменить
+                        </Link>
+                    </div>
                 </div>
                 <p class="text-muted-foreground text-xs">
                     {{ item.description }}
+                    <span
+                        v-if="item.comments_count !== undefined"
+                        class="ml-2"
+                    >
+                        · {{ item.comments_count }} комм.
+                    </span>
                 </p>
             </li>
         </ul>

@@ -17,10 +17,19 @@ class NewsController extends Controller
             $sort = 'latest';
         }
 
+        $search = trim($request->string('search')->toString());
+        if (strlen($search) > 100) {
+            $search = mb_substr($search, 0, 100);
+        }
+
         $query = News::query()
             ->with('author:id,login')
             ->withCount('comments')
             ->withLikeMeta($request->user());
+
+        if ($search !== '') {
+            $query->whereRaw('LOWER(title) LIKE ?', ['%'.mb_strtolower($search).'%']);
+        }
 
         if ($sort === 'likes') {
             $query->orderByDesc('likes_count')->latest();
@@ -43,6 +52,7 @@ class NewsController extends Controller
         return Inertia::render('news/Index', [
             'items' => $items,
             'sort' => $sort,
+            'search' => $search,
         ]);
     }
 

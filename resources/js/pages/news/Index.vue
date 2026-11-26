@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { Head, Link, usePage } from '@inertiajs/vue3';
+import { Form, Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import NewsLikeController from '@/actions/App/Http/Controllers/News/LikeController';
 import LikeButton from '@/components/LikeButton.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { create, edit } from '@/routes/admin/news';
 import { index as newsIndex, show } from '@/routes/news';
 import type { NewsListItem, NewsSort } from '@/types/news';
@@ -10,9 +12,15 @@ import type { NewsListItem, NewsSort } from '@/types/news';
 type Props = {
     items: NewsListItem[];
     sort: NewsSort;
+    search: string;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const listQuery = (sort: NewsSort) => ({
+    sort,
+    ...(props.search !== '' ? { search: props.search } : {}),
+});
 
 const sortLinkClass = (active: boolean) =>
     active
@@ -39,17 +47,41 @@ const user = computed(() => page.props.auth.user);
             </Link>
         </div>
 
+        <Form
+            v-bind="newsIndex.form()"
+            class="mb-4 flex flex-wrap items-center gap-2"
+        >
+            <input type="hidden" name="sort" :value="sort" />
+            <Input
+                type="search"
+                name="search"
+                placeholder="Поиск по названию"
+                class="max-w-xs flex-1"
+                :default-value="search"
+            />
+            <Button type="submit" variant="secondary" class="shrink-0">
+                Найти
+            </Button>
+            <Link
+                v-if="search !== ''"
+                :href="newsIndex({ query: { sort } })"
+                class="text-muted-foreground text-sm underline"
+            >
+                Сбросить
+            </Link>
+        </Form>
+
         <div class="mb-6 flex flex-wrap gap-4 text-sm">
             <span class="text-muted-foreground">Сортировка:</span>
             <Link
-                :href="newsIndex({ query: { sort: 'latest' } })"
+                :href="newsIndex({ query: listQuery('latest') })"
                 :class="sortLinkClass(sort === 'latest')"
                 preserve-scroll
             >
                 Сначала новые
             </Link>
             <Link
-                :href="newsIndex({ query: { sort: 'likes' } })"
+                :href="newsIndex({ query: listQuery('likes') })"
                 :class="sortLinkClass(sort === 'likes')"
                 preserve-scroll
             >
@@ -58,7 +90,10 @@ const user = computed(() => page.props.auth.user);
         </div>
 
         <p v-if="items.length === 0" class="text-muted-foreground text-sm">
-            Пока нет новостей.
+            <template v-if="search !== ''">
+                Ничего не найдено по запросу «{{ search }}».
+            </template>
+            <template v-else>Пока нет новостей.</template>
         </p>
 
         <ul v-else class="divide-y divide-border border border-border">

@@ -1,5 +1,7 @@
 import type { LikeMeta } from '@/types/likeable';
 
+export type TrainerSort = 'latest' | 'likes';
+
 export type TrainerListItem = {
     id: string;
     title: string;

@@ -4,14 +4,20 @@ import { computed } from 'vue';
 import TrainerLikeController from '@/actions/App/Http/Controllers/Trainers/LikeController';
 import LikeButton from '@/components/LikeButton.vue';
 import { create as adminTrainerCreate, edit } from '@/routes/admin/trainers';
-import { show } from '@/routes/trainers';
-import type { TrainerListItem } from '@/types/trainer';
+import { index as trainersIndex, show } from '@/routes/trainers';
+import type { TrainerListItem, TrainerSort } from '@/types/trainer';
 
 type Props = {
     items: TrainerListItem[];
+    sort: TrainerSort;
 };
 
 defineProps<Props>();
+
+const sortLinkClass = (active: boolean) =>
+    active
+        ? 'text-foreground font-medium'
+        : 'text-muted-foreground hover:text-foreground';
 
 const page = usePage();
 const isAdmin = computed(() => page.props.auth.isAdmin);

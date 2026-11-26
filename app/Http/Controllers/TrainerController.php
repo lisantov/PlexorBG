@@ -13,11 +13,23 @@ class TrainerController extends Controller
 {
     public function index(Request $request): Response
     {
-        $items = Task::query()
+        $sort = $request->string('sort')->toString();
+        if (! in_array($sort, ['latest', 'likes'], true)) {
+            $sort = 'latest';
+        }
+
+        $query = Task::query()
             ->where('status', TaskStatus::APPROVED)
             ->withCount('comments')
-            ->withLikeMeta($request->user())
-            ->latest()
+            ->withLikeMeta($request->user());
+
+        if ($sort === 'likes') {
+            $query->orderByDesc('likes_count')->latest();
+        } else {
+            $query->latest();
+        }
+
+        $items = $query
             ->get()
             ->map(fn (Task $task) => [
                 'id' => $task->id,
@@ -30,6 +42,7 @@ class TrainerController extends Controller
 
         return Inertia::render('trainers/Index', [
             'items' => $items,
+            'sort' => $sort,
         ]);
     }
 

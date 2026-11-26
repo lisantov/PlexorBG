@@ -39,6 +39,24 @@ const user = computed(() => page.props.auth.user);
             </Link>
         </div>
 
+        <div class="mb-6 flex flex-wrap gap-4 text-sm">
+            <span class="text-muted-foreground">Сортировка:</span>
+            <Link
+                :href="trainersIndex({ query: { sort: 'latest' } })"
+                :class="sortLinkClass(sort === 'latest')"
+                preserve-scroll
+            >
+                Сначала новые
+            </Link>
+            <Link
+                :href="trainersIndex({ query: { sort: 'likes' } })"
+                :class="sortLinkClass(sort === 'likes')"
+                preserve-scroll
+            >
+                По лайкам
+            </Link>
+        </div>
+
         <p v-if="items.length === 0" class="text-muted-foreground text-sm">
             Пока нет опубликованных тренажёров.
         </p>

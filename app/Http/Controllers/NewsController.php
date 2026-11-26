@@ -12,11 +12,23 @@ class NewsController extends Controller
 {
     public function index(Request $request): Response
     {
-        $items = News::query()
+        $sort = $request->string('sort')->toString();
+        if (! in_array($sort, ['latest', 'likes'], true)) {
+            $sort = 'latest';
+        }
+
+        $query = News::query()
             ->with('author:id,login')
             ->withCount('comments')
-            ->withLikeMeta($request->user())
-            ->latest()
+            ->withLikeMeta($request->user());
+
+        if ($sort === 'likes') {
+            $query->orderByDesc('likes_count')->latest();
+        } else {
+            $query->latest();
+        }
+
+        $items = $query
             ->get()
             ->map(fn (News $news) => [
                 'id' => $news->id,
@@ -30,6 +42,7 @@ class NewsController extends Controller
 
         return Inertia::render('news/Index', [
             'items' => $items,
+            'sort' => $sort,
         ]);
     }
 

@@ -4,14 +4,20 @@ import { computed } from 'vue';
 import NewsLikeController from '@/actions/App/Http/Controllers/News/LikeController';
 import LikeButton from '@/components/LikeButton.vue';
 import { create, edit } from '@/routes/admin/news';
-import { show } from '@/routes/news';
-import type { NewsListItem } from '@/types/news';
+import { index as newsIndex, show } from '@/routes/news';
+import type { NewsListItem, NewsSort } from '@/types/news';
 
 type Props = {
     items: NewsListItem[];
+    sort: NewsSort;
 };
 
 defineProps<Props>();
+
+const sortLinkClass = (active: boolean) =>
+    active
+        ? 'text-foreground font-medium'
+        : 'text-muted-foreground hover:text-foreground';
 
 const page = usePage();
 const isAdmin = computed(() => page.props.auth.isAdmin);
@@ -30,6 +36,24 @@ const user = computed(() => page.props.auth.user);
                 class="text-sm text-muted-foreground underline"
             >
                 Добавить
+            </Link>
+        </div>
+
+        <div class="mb-6 flex flex-wrap gap-4 text-sm">
+            <span class="text-muted-foreground">Сортировка:</span>
+            <Link
+                :href="newsIndex({ query: { sort: 'latest' } })"
+                :class="sortLinkClass(sort === 'latest')"
+                preserve-scroll
+            >
+                Сначала новые
+            </Link>
+            <Link
+                :href="newsIndex({ query: { sort: 'likes' } })"
+                :class="sortLinkClass(sort === 'likes')"
+                preserve-scroll
+            >
+                По лайкам
             </Link>
         </div>
 

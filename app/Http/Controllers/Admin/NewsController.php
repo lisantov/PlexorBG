@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\StoreNewsRequest;
 use App\Http\Requests\Admin\UpdateNewsRequest;
 use App\Models\News;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -19,10 +21,15 @@ class NewsController extends Controller
 
     public function store(StoreNewsRequest $request): RedirectResponse
     {
+        $imagePath = $request->hasFile('image')
+            ? $this->storeImage($request->file('image'))
+            : null;
+
         News::query()->create([
             'author_id' => $request->user()->id,
             'title' => $request->string('title')->toString(),
             'content' => $request->string('content')->toString(),
+            'image_path' => $imagePath,
         ]);
 
         Inertia::flash('toast', [
@@ -40,16 +47,27 @@ class NewsController extends Controller
                 'id' => $news->id,
                 'title' => $news->title,
                 'content' => $news->content,
+                'image_url' => $news->imageUrl(),
             ],
         ]);
     }
 
     public function update(UpdateNewsRequest $request, News $news): RedirectResponse
     {
-        $news->update([
+        $data = [
             'title' => $request->string('title')->toString(),
             'content' => $request->string('content')->toString(),
-        ]);
+        ];
+
+        if ($request->boolean('remove_image')) {
+            $this->deleteImage($news->image_path);
+            $data['image_path'] = null;
+        } elseif ($request->hasFile('image')) {
+            $this->deleteImage($news->image_path);
+            $data['image_path'] = $this->storeImage($request->file('image'));
+        }
+
+        $news->update($data);
 
         Inertia::flash('toast', [
             'type' => 'success',
@@ -69,5 +87,17 @@ class NewsController extends Controller
         ]);
 
         return to_route('admin.index', ['tab' => 'news']);
+    }
+
+    private function storeImage(UploadedFile $file): string
+    {
+        return $file->store('news', 'public');
+    }
+
+    private function deleteImage(?string $path): void
+    {
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }

@@ -17,12 +17,27 @@ import { index as adminIndex } from '@/routes/admin';
         <Form
             v-bind="NewsController.store.form()"
             class="flex flex-col gap-4"
+            enctype="multipart/form-data"
             v-slot="{ errors, processing }"
         >
             <div class="grid gap-2">
                 <Label for="title">Заголовок</Label>
                 <Input id="title" name="title" required maxlength="255" />
                 <InputError :message="errors.title" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="image">Изображение</Label>
+                <Input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                />
+                <p class="text-muted-foreground text-xs">
+                    JPEG, PNG, WebP или GIF, до 5 МБ.
+                </p>
+                <InputError :message="errors.image" />
             </div>
 
             <div class="grid gap-2">

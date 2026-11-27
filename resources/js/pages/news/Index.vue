@@ -145,6 +145,12 @@ const user = computed(() => page.props.auth.user);
                         </Link>
                     </div>
                 </div>
+                <img
+                    v-if="item.image_url"
+                    :src="item.image_url"
+                    :alt="item.title"
+                    class="max-h-40 w-full rounded-md border border-border object-cover"
+                />
                 <p class="text-muted-foreground line-clamp-3 whitespace-pre-wrap">
                     {{ item.content }}
                 </p>

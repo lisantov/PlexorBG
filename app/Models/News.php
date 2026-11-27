@@ -9,13 +9,23 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Facades\Storage;
 
 #[Table(key: 'id', keyType: 'string', incrementing: false)]
-#[Fillable(['author_id', 'title', 'content'])]
+#[Fillable(['author_id', 'title', 'content', 'image_path'])]
 class News extends Model
 {
     use HasUuids;
     use Likeable;
+
+    protected static function booted(): void
+    {
+        static::deleting(function (News $news) {
+            if ($news->image_path) {
+                Storage::disk('public')->delete($news->image_path);
+            }
+        });
+    }
 
     /**
      * @return array<string, string>
@@ -36,5 +46,14 @@ class News extends Model
     public function comments(): MorphMany
     {
         return $this->morphMany(Commentary::class, 'commentable');
+    }
+
+    public function imageUrl(): ?string
+    {
+        if (! $this->image_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->image_path);
     }
 }

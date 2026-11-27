@@ -7,10 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { index as adminIndex } from '@/routes/admin';
-import type { NewsListItem } from '@/types/news';
+import type { NewsAdminEdit } from '@/types/news';
 
 type Props = {
-    news: Pick<NewsListItem, 'id' | 'title' | 'content'>;
+    news: NewsAdminEdit;
 };
 
 const props = defineProps<Props>();
@@ -25,6 +25,7 @@ const props = defineProps<Props>();
         <Form
             v-bind="NewsController.update.form(props.news.id)"
             class="mb-8 flex flex-col gap-4"
+            enctype="multipart/form-data"
             v-slot="{ errors, processing }"
         >
             <div class="grid gap-2">
@@ -37,6 +38,39 @@ const props = defineProps<Props>();
                     :default-value="news.title"
                 />
                 <InputError :message="errors.title" />
+            </div>
+
+            <div class="grid gap-2">
+                <Label for="image">Изображение</Label>
+                <img
+                    v-if="news.image_url"
+                    :src="news.image_url"
+                    :alt="news.title"
+                    class="max-h-48 w-full rounded-md border border-border object-cover"
+                />
+                <Input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif"
+                />
+                <p class="text-muted-foreground text-xs">
+                    JPEG, PNG, WebP или GIF, до 5 МБ. Оставьте пустым, чтобы не
+                    менять.
+                </p>
+                <label
+                    v-if="news.image_url"
+                    class="flex items-center gap-2 text-sm"
+                >
+                    <input
+                        type="checkbox"
+                        name="remove_image"
+                        value="1"
+                        class="rounded border-border"
+                    />
+                    Удалить текущее изображение
+                </label>
+                <InputError :message="errors.image" />
             </div>
 
             <div class="grid gap-2">

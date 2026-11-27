@@ -53,6 +53,12 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                     :like-form="NewsLikeController.toggle.form(news.id)"
                 />
             </div>
+            <img
+                v-if="news.image_url"
+                :src="news.image_url"
+                :alt="news.title"
+                class="max-h-96 w-full rounded-md border border-border object-cover"
+            />
             <p class="text-sm whitespace-pre-wrap">{{ news.content }}</p>
             <Link
                 v-if="isAdmin"

@@ -5,6 +5,8 @@ import CommentaryController from '@/actions/App/Http/Controllers/News/Commentary
 import NewsLikeController from '@/actions/App/Http/Controllers/News/LikeController';
 import CommentThread from '@/components/comments/CommentThread.vue';
 import LikeButton from '@/components/LikeButton.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
+import PagePanel from '@/components/layout/PagePanel.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { login } from '@/routes';
@@ -29,16 +31,18 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
 <template>
     <Head :title="news.title" />
 
-    <div class="mx-auto max-w-3xl px-4 py-10">
+    <PageContainer narrow>
         <Link
             :href="newsIndex()"
-            class="text-muted-foreground mb-6 inline-block text-sm underline"
+            class="text-muted-foreground mb-6 inline-block text-sm hover:text-primary"
         >
             ← Все новости
         </Link>
 
-        <article class="mb-10 space-y-3 border-b border-border pb-8">
-            <h1 class="text-2xl font-semibold">{{ news.title }}</h1>
+        <PagePanel class="mb-8 space-y-5">
+            <h1 class="text-3xl font-bold tracking-tight lg:text-4xl">
+                {{ news.title }}
+            </h1>
             <div
                 class="flex flex-wrap items-center gap-3 text-xs text-muted-foreground"
             >
@@ -57,20 +61,22 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                 v-if="news.image_url"
                 :src="news.image_url"
                 :alt="news.title"
-                class="max-h-96 w-full rounded-md border border-border object-cover"
+                class="max-h-[28rem] w-full rounded-xl border-2 border-border/80 object-cover"
             />
-            <p class="text-sm whitespace-pre-wrap">{{ news.content }}</p>
+            <p class="text-base leading-relaxed whitespace-pre-wrap">
+                {{ news.content }}
+            </p>
             <Link
                 v-if="isAdmin"
                 :href="edit(news.id)"
-                class="text-muted-foreground text-xs underline"
+                class="text-muted-foreground text-sm underline hover:text-primary"
             >
                 Редактировать
             </Link>
-        </article>
+        </PagePanel>
 
-        <section class="space-y-6">
-            <h2 class="text-lg font-medium">
+        <PagePanel class="space-y-6">
+            <h2 class="text-xl font-semibold">
                 Комментарии ({{ comments_count }})
             </h2>
 
@@ -116,6 +122,6 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
                 <Link :href="login()" class="underline">Войдите</Link>, чтобы
                 оставить комментарий.
             </p>
-        </section>
-    </div>
+        </PagePanel>
+    </PageContainer>
 </template>

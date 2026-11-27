@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { Form, Head, Link, usePage } from '@inertiajs/vue3';
+import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
 import NewsLikeController from '@/actions/App/Http/Controllers/News/LikeController';
 import LikeButton from '@/components/LikeButton.vue';
+import ListFilters from '@/components/list/ListFilters.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
+import PageTitle from '@/components/layout/PageTitle.vue';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { create, edit } from '@/routes/admin/news';
 import { index as newsIndex, show } from '@/routes/news';
 import type { NewsListItem, NewsSort } from '@/types/news';
@@ -22,10 +24,10 @@ const listQuery = (sort: NewsSort) => ({
     ...(props.search !== '' ? { search: props.search } : {}),
 });
 
-const sortLinkClass = (active: boolean) =>
-    active
-        ? 'text-foreground font-medium'
-        : 'text-muted-foreground hover:text-foreground';
+const sortOptions = [
+    { value: 'latest', label: 'Сначала новые' },
+    { value: 'likes', label: 'По лайкам' },
+] as const;
 
 const page = usePage();
 const isAdmin = computed(() => page.props.auth.isAdmin);
@@ -35,78 +37,60 @@ const user = computed(() => page.props.auth.user);
 <template>
     <Head title="Новости" />
 
-    <div class="mx-auto max-w-3xl px-4 py-10">
-        <div class="mb-6 flex items-center justify-between gap-2">
-            <h1 class="text-2xl font-semibold">Новости</h1>
-            <Link
-                v-if="isAdmin"
-                :href="create()"
-                class="text-sm text-muted-foreground underline"
-            >
-                Добавить
-            </Link>
-        </div>
-
-        <Form
-            v-bind="newsIndex.form()"
-            class="mb-4 flex flex-wrap items-center gap-2"
+    <PageContainer>
+        <PageTitle
+            title="Новости"
+            description="Лента публикаций и анонсов с арены PlexorBG."
         >
-            <input type="hidden" name="sort" :value="sort" />
-            <Input
-                type="search"
-                name="search"
-                placeholder="Поиск по названию"
-                class="max-w-xs flex-1"
-                :default-value="search"
-            />
-            <Button type="submit" variant="secondary" class="shrink-0">
-                Найти
-            </Button>
-            <Link
-                v-if="search !== ''"
-                :href="newsIndex({ query: { sort } })"
-                class="text-muted-foreground text-sm underline"
-            >
-                Сбросить
-            </Link>
-        </Form>
+            <template v-if="isAdmin" #actions>
+                <Button as-child variant="secondary">
+                    <Link :href="create()">Добавить</Link>
+                </Button>
+            </template>
+        </PageTitle>
 
-        <div class="mb-6 flex flex-wrap gap-4 text-sm">
-            <span class="text-muted-foreground">Сортировка:</span>
-            <Link
-                :href="newsIndex({ query: listQuery('latest') })"
-                :class="sortLinkClass(sort === 'latest')"
-                preserve-scroll
-            >
-                Сначала новые
-            </Link>
-            <Link
-                :href="newsIndex({ query: listQuery('likes') })"
-                :class="sortLinkClass(sort === 'likes')"
-                preserve-scroll
-            >
-                По лайкам
-            </Link>
-        </div>
+        <ListFilters
+            :form="newsIndex.form()"
+            :search="search"
+            :sort="sort"
+            :sort-options="[...sortOptions]"
+            :sort-href="(value) => newsIndex({ query: listQuery(value as NewsSort) })"
+            :reset-href="newsIndex({ query: { sort } })"
+        />
 
-        <p v-if="items.length === 0" class="text-muted-foreground text-sm">
+        <p
+            v-if="items.length === 0"
+            class="text-muted-foreground text-base"
+        >
             <template v-if="search !== ''">
                 Ничего не найдено по запросу «{{ search }}».
             </template>
             <template v-else>Пока нет новостей.</template>
         </p>
 
-        <ul v-else class="divide-y divide-border border border-border">
-            <li
+        <div v-else class="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <article
                 v-for="item in items"
                 :key="item.id"
-                class="space-y-2 px-4 py-4 text-sm"
+                class="flex flex-col overflow-hidden rounded-2xl border-2 border-border/80 bg-card/50 shadow-lg transition hover:border-primary/40"
             >
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                <Link
+                    v-if="item.image_url"
+                    :href="show(item.id)"
+                    class="block aspect-[16/10] overflow-hidden border-b border-border/60"
+                >
+                    <img
+                        :src="item.image_url"
+                        :alt="item.title"
+                        class="size-full object-cover transition hover:scale-105"
+                    />
+                </Link>
+                <div class="flex flex-1 flex-col gap-3 p-5 text-sm">
+                <div class="flex flex-wrap items-start justify-between gap-2">
                     <div class="space-y-1">
                         <Link
                             :href="show(item.id)"
-                            class="font-medium underline-offset-4 hover:underline"
+                            class="text-lg font-semibold underline-offset-4 hover:text-primary hover:underline"
                         >
                             {{ item.title }}
                         </Link>
@@ -145,16 +129,11 @@ const user = computed(() => page.props.auth.user);
                         </Link>
                     </div>
                 </div>
-                <img
-                    v-if="item.image_url"
-                    :src="item.image_url"
-                    :alt="item.title"
-                    class="max-h-40 w-full rounded-md border border-border object-cover"
-                />
-                <p class="text-muted-foreground line-clamp-3 whitespace-pre-wrap">
+                <p class="text-muted-foreground line-clamp-4 flex-1 whitespace-pre-wrap leading-relaxed">
                     {{ item.content }}
                 </p>
-            </li>
-        </ul>
-    </div>
+                </div>
+            </article>
+        </div>
+    </PageContainer>
 </template>

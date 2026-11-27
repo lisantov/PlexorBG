@@ -5,6 +5,8 @@ import TrainerCommentaryController from '@/actions/App/Http/Controllers/Trainers
 import TrainerLikeController from '@/actions/App/Http/Controllers/Trainers/LikeController';
 import CommentThread from '@/components/comments/CommentThread.vue';
 import LikeButton from '@/components/LikeButton.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
+import PagePanel from '@/components/layout/PagePanel.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { login } from '@/routes';
@@ -32,16 +34,18 @@ const commentForm = computed(() =>
 <template>
     <Head :title="trainer.title" />
 
-    <div class="mx-auto max-w-3xl px-4 py-10">
+    <PageContainer narrow>
         <Link
             :href="trainersIndex()"
-            class="text-muted-foreground mb-6 inline-block text-sm underline"
+            class="text-muted-foreground mb-6 inline-block text-sm hover:text-primary"
         >
             ← Все тренажёры
         </Link>
 
-        <article class="mb-8 space-y-3 border-b border-border pb-8">
-            <h1 class="text-2xl font-semibold">{{ trainer.title }}</h1>
+        <PagePanel class="mb-8 space-y-5">
+            <h1 class="text-3xl font-bold tracking-tight lg:text-4xl">
+                {{ trainer.title }}
+            </h1>
             <div
                 class="flex flex-wrap items-center gap-3 text-sm text-muted-foreground"
             >
@@ -56,33 +60,33 @@ const commentForm = computed(() =>
                 />
             </div>
             <section
-                class="border border-border p-4 text-sm whitespace-pre-wrap"
+                class="rounded-xl border-2 border-border/80 bg-background/50 p-5 text-base leading-relaxed whitespace-pre-wrap"
             >
                 {{ trainer.content }}
             </section>
             <Link
                 v-if="isAdmin"
                 :href="edit(trainer.id)"
-                class="text-muted-foreground text-xs underline"
+                class="text-muted-foreground text-sm underline hover:text-primary"
             >
                 Редактировать
             </Link>
-        </article>
+        </PagePanel>
 
-        <section class="mb-10 space-y-3">
-            <h2 class="text-sm font-medium">Сессия</h2>
-            <p class="text-muted-foreground text-xs">
+        <PagePanel class="mb-8 space-y-4">
+            <h2 class="text-lg font-semibold">Сессия</h2>
+            <p class="text-muted-foreground text-sm">
                 Отправка решения подключится позже.
             </p>
             <textarea
-                class="min-h-40 w-full border border-border bg-background p-3 font-mono text-sm"
+                class="min-h-48 w-full rounded-xl border-2 border-border bg-background p-4 font-mono text-sm"
                 placeholder="// решение"
                 disabled
             />
-        </section>
+        </PagePanel>
 
-        <section class="space-y-6 border-t border-border pt-8">
-            <h2 class="text-lg font-medium">
+        <PagePanel class="space-y-6">
+            <h2 class="text-xl font-semibold">
                 Комментарии ({{ comments_count }})
             </h2>
 
@@ -128,6 +132,6 @@ const commentForm = computed(() =>
                 <Link :href="login()" class="underline">Войдите</Link>, чтобы
                 оставить комментарий.
             </p>
-        </section>
-    </div>
+        </PagePanel>
+    </PageContainer>
 </template>

@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import { Head, Link, usePage } from '@inertiajs/vue3';
 import { computed } from 'vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
+import PagePanel from '@/components/layout/PagePanel.vue';
+import PageTitle from '@/components/layout/PageTitle.vue';
+import { Button } from '@/components/ui/button';
 import { edit as settingsEdit } from '@/routes/profile';
 
 const page = usePage();
@@ -10,25 +14,23 @@ const user = computed(() => page.props.auth.user);
 <template>
     <Head title="Профиль" />
 
-    <div class="mx-auto max-w-3xl px-4 py-10">
-        <h1 class="mb-6 text-2xl font-semibold">Профиль</h1>
+    <PageContainer narrow>
+        <PageTitle
+            title="Профиль"
+            description="Данные вашего аккаунта на PlexorBG."
+        />
 
-        <dl v-if="user" class="mb-8 space-y-3 text-sm">
-            <div class="flex gap-3">
-                <dt class="w-20 text-muted-foreground">Login</dt>
-                <dd>{{ user.login }}</dd>
-            </div>
-            <div class="flex gap-3">
-                <dt class="w-20 text-muted-foreground">Email</dt>
+        <PagePanel v-if="user" class="space-y-6">
+            <dl class="grid gap-4 text-base sm:grid-cols-[8rem_1fr]">
+                <dt class="text-muted-foreground">Login</dt>
+                <dd class="font-medium">{{ user.login }}</dd>
+                <dt class="text-muted-foreground">Email</dt>
                 <dd>{{ user.email }}</dd>
-            </div>
-        </dl>
+            </dl>
 
-        <Link
-            :href="settingsEdit()"
-            class="text-sm text-muted-foreground underline"
-        >
-            Настройки аккаунта
-        </Link>
-    </div>
+            <Button as-child variant="secondary">
+                <Link :href="settingsEdit()">Настройки аккаунта</Link>
+            </Button>
+        </PagePanel>
+    </PageContainer>
 </template>

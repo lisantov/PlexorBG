@@ -1,4 +1,5 @@
 export * from './admin';
+export * from './home';
 export * from './auth';
 export * from './comment';
 export * from './navigation';

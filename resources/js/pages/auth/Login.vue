@@ -11,14 +11,14 @@ import { register } from '@/routes';
 
 defineOptions({
     layout: {
-        title: 'Log in',
-        description: 'Enter your email or login and password',
+        title: 'Вход',
+        description: 'Email или логин и пароль',
     },
 });
 </script>
 
 <template>
-    <Head title="Log in" />
+    <Head title="Вход" />
 
     <Form
         v-bind="SessionController.store.form()"

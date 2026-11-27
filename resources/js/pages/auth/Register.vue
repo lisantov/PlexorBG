@@ -11,14 +11,14 @@ import { login } from '@/routes';
 
 defineOptions({
     layout: {
-        title: 'Create an account',
-        description: 'Enter your details below to register',
+        title: 'Регистрация',
+        description: 'Создайте аккаунт и выйдите на арену',
     },
 });
 </script>
 
 <template>
-    <Head title="Register" />
+    <Head title="Регистрация" />
 
     <Form
         v-bind="RegisteredUserController.store.form()"

@@ -3,6 +3,9 @@ import { Head, Link } from '@inertiajs/vue3';
 import NewsController from '@/actions/App/Http/Controllers/Admin/NewsController';
 import TrainerController from '@/actions/App/Http/Controllers/Admin/TrainerController';
 import ConfirmDeleteDialog from '@/components/ConfirmDeleteDialog.vue';
+import PageContainer from '@/components/layout/PageContainer.vue';
+import PagePanel from '@/components/layout/PagePanel.vue';
+import PageTitle from '@/components/layout/PageTitle.vue';
 import { Button } from '@/components/ui/button';
 import { index as adminIndex } from '@/routes/admin';
 import { create as adminNewsCreate, edit as adminNewsEdit } from '@/routes/admin/news';
@@ -28,7 +31,7 @@ const tabLinkClass = (active: boolean) =>
     [
         'border-b-2 px-1 pb-2 text-sm transition-colors',
         active
-            ? 'border-foreground text-foreground font-medium'
+            ? 'border-primary text-primary font-medium'
             : 'border-transparent text-muted-foreground hover:text-foreground',
     ];
 
@@ -39,10 +42,13 @@ const formatDate = (value: string | null) =>
 <template>
     <Head title="Админ-панель" />
 
-    <div class="mx-auto max-w-3xl px-4 py-10">
-        <h1 class="mb-6 text-2xl font-semibold">Админ-панель</h1>
+    <PageContainer>
+        <PageTitle
+            title="Админ-панель"
+            description="Управление новостями и тренажёрами."
+        />
 
-        <nav class="mb-8 flex gap-6 border-b border-border">
+        <nav class="mb-8 flex gap-8 border-b-2 border-border/80">
             <Link
                 :href="adminIndex({ query: { tab: 'news' } })"
                 :class="tabLinkClass(tab === 'news')"
@@ -57,7 +63,7 @@ const formatDate = (value: string | null) =>
             </Link>
         </nav>
 
-        <section v-if="tab === 'news'" class="space-y-4">
+        <PagePanel v-if="tab === 'news'" class="space-y-4">
             <div class="flex items-center justify-between gap-2">
                 <p class="text-muted-foreground text-sm">
                     Всего: {{ news.length }}
@@ -103,9 +109,9 @@ const formatDate = (value: string | null) =>
                     </div>
                 </li>
             </ul>
-        </section>
+        </PagePanel>
 
-        <section v-else class="space-y-4">
+        <PagePanel v-else class="space-y-4">
             <div class="flex items-center justify-between gap-2">
                 <p class="text-muted-foreground text-sm">
                     Всего: {{ trainers.length }}
@@ -157,6 +163,6 @@ const formatDate = (value: string | null) =>
                     </div>
                 </li>
             </ul>
-        </section>
-    </div>
+        </PagePanel>
+    </PageContainer>
 </template>

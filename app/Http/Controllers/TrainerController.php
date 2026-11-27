@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enums\TaskStatus;
 use App\Models\Commentary;
 use App\Models\Task;
+use App\Support\TitleSearch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -28,9 +29,7 @@ class TrainerController extends Controller
             ->withCount('comments')
             ->withLikeMeta($request->user());
 
-        if ($search !== '') {
-            $query->whereRaw('LOWER(title) LIKE ?', ['%'.mb_strtolower($search).'%']);
-        }
+        TitleSearch::applySql($query, $search);
 
         if ($sort === 'likes') {
             $query->orderByDesc('likes_count')->latest();
@@ -38,8 +37,7 @@ class TrainerController extends Controller
             $query->latest();
         }
 
-        $items = $query
-            ->get()
+        $items = TitleSearch::filterCollection($query->get(), $search)
             ->map(fn (Task $task) => [
                 'id' => $task->id,
                 'title' => $task->title,

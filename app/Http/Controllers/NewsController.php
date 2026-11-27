@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Commentary;
 use App\Models\News;
+use App\Support\TitleSearch;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -27,9 +28,7 @@ class NewsController extends Controller
             ->withCount('comments')
             ->withLikeMeta($request->user());
 
-        if ($search !== '') {
-            $query->whereRaw('LOWER(title) LIKE ?', ['%'.mb_strtolower($search).'%']);
-        }
+        TitleSearch::applySql($query, $search);
 
         if ($sort === 'likes') {
             $query->orderByDesc('likes_count')->latest();
@@ -37,8 +36,7 @@ class NewsController extends Controller
             $query->latest();
         }
 
-        $items = $query
-            ->get()
+        $items = TitleSearch::filterCollection($query->get(), $search)
             ->map(fn (News $news) => [
                 'id' => $news->id,
                 'title' => $news->title,

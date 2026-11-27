@@ -13,9 +13,11 @@ import {
     create as adminTrainerCreate,
     edit as adminTrainerEdit,
 } from '@/routes/admin/trainers';
+import { show as adminApplicationShow } from '@/routes/admin/trainer-applications';
 import type {
     AdminNewsListItem,
     AdminTab,
+    AdminTrainerApplicationListItem,
     AdminTrainerListItem,
 } from '@/types/admin';
 
@@ -23,6 +25,7 @@ type Props = {
     tab: AdminTab;
     news: AdminNewsListItem[];
     trainers: AdminTrainerListItem[];
+    trainerApplications: AdminTrainerApplicationListItem[];
 };
 
 defineProps<Props>();
@@ -45,7 +48,7 @@ const formatDate = (value: string | null) =>
     <PageContainer>
         <PageTitle
             title="Админ-панель"
-            description="Управление новостями и тренажёрами."
+            description="Новости, тренажёры и заявки от пользователей."
         />
 
         <nav class="mb-8 flex gap-8 border-b-2 border-border/80">
@@ -60,6 +63,12 @@ const formatDate = (value: string | null) =>
                 :class="tabLinkClass(tab === 'trainers')"
             >
                 Тренажёры
+            </Link>
+            <Link
+                :href="adminIndex({ query: { tab: 'applications' } })"
+                :class="tabLinkClass(tab === 'applications')"
+            >
+                Заявки · тренажёры
             </Link>
         </nav>
 
@@ -111,7 +120,7 @@ const formatDate = (value: string | null) =>
             </ul>
         </PagePanel>
 
-        <PagePanel v-else class="space-y-4">
+        <PagePanel v-else-if="tab === 'trainers'" class="space-y-4">
             <div class="flex items-center justify-between gap-2">
                 <p class="text-muted-foreground text-sm">
                     Всего: {{ trainers.length }}
@@ -143,7 +152,7 @@ const formatDate = (value: string | null) =>
                             {{ item.description }}
                         </p>
                         <p class="text-muted-foreground text-xs">
-                            {{ item.status }} · {{ formatDate(item.created_at) }}
+                            {{ formatDate(item.created_at) }}
                         </p>
                     </div>
                     <div class="flex shrink-0 items-center gap-2">
@@ -161,6 +170,48 @@ const formatDate = (value: string | null) =>
                             size="sm"
                         />
                     </div>
+                </li>
+            </ul>
+        </PagePanel>
+
+        <PagePanel v-else class="space-y-4">
+            <p class="text-muted-foreground text-sm">
+                Ожидают решения: {{ trainerApplications.length }}
+            </p>
+
+            <p
+                v-if="trainerApplications.length === 0"
+                class="text-muted-foreground border border-border px-4 py-8 text-center text-sm"
+            >
+                Нет заявок на рассмотрении.
+            </p>
+
+            <ul
+                v-else
+                class="divide-y divide-border border border-border text-sm"
+            >
+                <li
+                    v-for="item in trainerApplications"
+                    :key="item.id"
+                    class="flex flex-wrap items-center justify-between gap-3 px-4 py-3"
+                >
+                    <div class="min-w-0 space-y-1">
+                        <p class="font-medium">{{ item.title }}</p>
+                        <p class="text-muted-foreground text-xs">
+                            {{ item.description }}
+                        </p>
+                        <p class="text-muted-foreground text-xs">
+                            <span v-if="item.author">{{ item.author }}</span>
+                            <span class="ml-2">{{
+                                formatDate(item.created_at)
+                            }}</span>
+                        </p>
+                    </div>
+                    <Button as-child variant="outline" size="sm">
+                        <Link :href="adminApplicationShow(item.id)">
+                            Открыть
+                        </Link>
+                    </Button>
                 </li>
             </ul>
         </PagePanel>

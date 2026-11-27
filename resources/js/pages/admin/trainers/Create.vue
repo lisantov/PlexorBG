@@ -49,6 +49,17 @@ import { index as adminIndex } from '@/routes/admin';
             </div>
 
             <div class="grid gap-2">
+                <Label for="reference_code">Эталонное решение (код)</Label>
+                <textarea
+                    id="reference_code"
+                    name="reference_code"
+                    rows="6"
+                    class="w-full border border-border bg-background p-2 font-mono text-sm"
+                />
+                <InputError :message="errors.reference_code" />
+            </div>
+
+            <div class="grid gap-2">
                 <Label for="answer">Эталонный ответ</Label>
                 <p class="text-muted-foreground text-xs">
                     Не показывается пользователям. Для проверки решений позже.

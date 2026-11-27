@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\NewsController;
+use App\Http\Controllers\Admin\TrainerApplicationController;
 use App\Http\Controllers\Admin\TrainerController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,4 +20,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('trainers/{task}/edit', [TrainerController::class, 'edit'])->name('trainers.edit');
     Route::put('trainers/{task}', [TrainerController::class, 'update'])->name('trainers.update');
     Route::delete('trainers/{task}', [TrainerController::class, 'destroy'])->name('trainers.destroy');
+
+    Route::get('applications/trainers/{task}', [TrainerApplicationController::class, 'show'])
+        ->name('trainer-applications.show');
+    Route::post('applications/trainers/{task}/approve', [TrainerApplicationController::class, 'approve'])
+        ->name('trainer-applications.approve');
+    Route::post('applications/trainers/{task}/reject', [TrainerApplicationController::class, 'reject'])
+        ->name('trainer-applications.reject');
 });

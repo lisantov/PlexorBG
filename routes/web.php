@@ -4,6 +4,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\News\CommentaryController as NewsCommentaryController;
 use App\Http\Controllers\News\LikeController as NewsLikeController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\TrainerApplicationController;
 use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\Trainers\CommentaryController as TrainerCommentaryController;
 use App\Http\Controllers\Trainers\LikeController as TrainerLikeController;
@@ -32,6 +33,15 @@ Route::middleware(['auth'])->group(function () {
     Route::inertia('profile', 'Profile')->name('profile.index');
 
     Route::redirect('dashboard', '/')->name('dashboard');
+
+    Route::middleware('not.admin')->group(function () {
+        Route::get('trainer-applications', [TrainerApplicationController::class, 'index'])
+            ->name('trainer-applications.index');
+        Route::get('trainer-applications/create', [TrainerApplicationController::class, 'create'])
+            ->name('trainer-applications.create');
+        Route::post('trainer-applications', [TrainerApplicationController::class, 'store'])
+            ->name('trainer-applications.store');
+    });
 });
 
 require __DIR__.'/settings.php';

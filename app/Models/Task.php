@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 #[Table(key: 'id', keyType: 'string', incrementing: false)]
-#[Fillable(['user_id', 'title', 'description', 'content', 'answer', 'status'])]
+#[Fillable(['user_id', 'title', 'description', 'content', 'reference_code', 'answer', 'status'])]
 class Task extends Model
 {
     use HasUuids;

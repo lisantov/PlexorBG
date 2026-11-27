@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Enums\TaskStatus;
 use App\Http\Controllers\Controller;
 use App\Models\News;
 use App\Models\Task;
@@ -14,7 +15,7 @@ class DashboardController extends Controller
     public function index(Request $request): Response
     {
         $tab = $request->string('tab')->toString();
-        if (! in_array($tab, ['news', 'trainers'], true)) {
+        if (! in_array($tab, ['news', 'trainers', 'applications'], true)) {
             $tab = 'news';
         }
 
@@ -30,13 +31,27 @@ class DashboardController extends Controller
             ]);
 
         $trainers = Task::query()
+            ->where('status', TaskStatus::APPROVED)
             ->latest()
             ->get()
             ->map(fn (Task $item) => [
                 'id' => $item->id,
                 'title' => $item->title,
                 'description' => $item->description,
-                'status' => $item->status->value,
+                'created_at' => $item->created_at?->toIso8601String(),
+            ]);
+
+        $trainerApplications = Task::query()
+            ->where('status', TaskStatus::CREATED)
+            ->whereHas('user.role', fn ($query) => $query->where('name', '!=', 'Admin'))
+            ->with('user:id,login')
+            ->latest()
+            ->get()
+            ->map(fn (Task $item) => [
+                'id' => $item->id,
+                'title' => $item->title,
+                'description' => $item->description,
+                'author' => $item->user?->login,
                 'created_at' => $item->created_at?->toIso8601String(),
             ]);
 
@@ -44,6 +59,7 @@ class DashboardController extends Controller
             'tab' => $tab,
             'news' => $news,
             'trainers' => $trainers,
+            'trainerApplications' => $trainerApplications,
         ]);
     }
 }

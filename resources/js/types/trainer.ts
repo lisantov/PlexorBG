@@ -18,5 +18,6 @@ export type TrainerAdminFields = Pick<
     TrainerDetail,
     'id' | 'title' | 'description' | 'content'
 > & {
+    reference_code: string;
     answer: string;
 };

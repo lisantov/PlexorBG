@@ -65,6 +65,18 @@ const props = defineProps<Props>();
             </div>
 
             <div class="grid gap-2">
+                <Label for="reference_code">Эталонное решение (код)</Label>
+                <textarea
+                    id="reference_code"
+                    name="reference_code"
+                    rows="6"
+                    class="w-full border border-border bg-background p-2 font-mono text-sm"
+                    :default-value="trainer.reference_code"
+                />
+                <InputError :message="errors.reference_code" />
+            </div>
+
+            <div class="grid gap-2">
                 <Label for="answer">Эталонный ответ</Label>
                 <textarea
                     id="answer"

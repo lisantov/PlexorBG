@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { Form, Link } from '@inertiajs/vue3';
-import { LogOut, Settings, User } from '@lucide/vue';
+import { Form, Link, usePage } from '@inertiajs/vue3';
+import { computed } from 'vue';
+import { ClipboardList, LogOut, Settings, User } from '@lucide/vue';
 import SessionController from '@/actions/App/Http/Controllers/Auth/SessionController';
 import {
     DropdownMenuGroup,
@@ -8,6 +9,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { index as trainerApplicationsIndex } from '@/routes/trainer-applications';
 import { edit as settingsEdit, index as profilePage } from '@/routes/profile';
 import type { User as AuthUser } from '@/types';
 
@@ -16,6 +18,9 @@ type Props = {
 };
 
 defineProps<Props>();
+
+const page = usePage();
+const isAdmin = computed(() => page.props.auth.isAdmin);
 </script>
 
 <template>
@@ -28,6 +33,12 @@ defineProps<Props>();
             <Link class="cursor-pointer" :href="profilePage()">
                 <User class="mr-2 h-4 w-4" />
                 Профиль
+            </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem v-if="!isAdmin" :as-child="true">
+            <Link class="cursor-pointer" :href="trainerApplicationsIndex()">
+                <ClipboardList class="mr-2 h-4 w-4" />
+                Мои заявки
             </Link>
         </DropdownMenuItem>
         <DropdownMenuItem :as-child="true">

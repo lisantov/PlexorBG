@@ -20,6 +20,7 @@ class StoreTrainerRequest extends FormRequest
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:255'],
             'content' => ['required', 'string'],
+            'reference_code' => ['nullable', 'string'],
             'answer' => ['required', 'string'],
         ];
     }

@@ -25,6 +25,7 @@ class TrainerController extends Controller
             'title' => $request->string('title')->toString(),
             'description' => $request->string('description')->toString(),
             'content' => $request->string('content')->toString(),
+            'reference_code' => $request->string('reference_code')->toString(),
             'answer' => $request->string('answer')->toString(),
             'status' => TaskStatus::APPROVED,
         ]);
@@ -45,6 +46,7 @@ class TrainerController extends Controller
                 'title' => $task->title,
                 'description' => $task->description,
                 'content' => $task->content,
+                'reference_code' => $task->reference_code,
                 'answer' => $task->answer,
             ],
         ]);
@@ -56,6 +58,7 @@ class TrainerController extends Controller
             'title' => $request->string('title')->toString(),
             'description' => $request->string('description')->toString(),
             'content' => $request->string('content')->toString(),
+            'reference_code' => $request->string('reference_code')->toString(),
             'answer' => $request->string('answer')->toString(),
         ]);
 

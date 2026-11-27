@@ -8,6 +8,10 @@ import PageContainer from '@/components/layout/PageContainer.vue';
 import PageTitle from '@/components/layout/PageTitle.vue';
 import { Button } from '@/components/ui/button';
 import { create as adminTrainerCreate, edit } from '@/routes/admin/trainers';
+import {
+    create as trainerApplicationCreate,
+    index as trainerApplicationsIndex,
+} from '@/routes/trainer-applications';
 import { index as trainersIndex, show } from '@/routes/trainers';
 import type { TrainerListItem, TrainerSort } from '@/types/trainer';
 
@@ -42,8 +46,20 @@ const user = computed(() => page.props.auth.user);
             title="Тренажёры"
             description="Задачи на арене — решай, лайкай и обсуждай подходы."
         >
-            <template v-if="isAdmin" #actions>
-                <Button as-child variant="secondary">
+            <template #actions>
+                <Button
+                    v-if="user && !isAdmin"
+                    as-child
+                    variant="outline"
+                >
+                    <Link :href="trainerApplicationsIndex()">Мои заявки</Link>
+                </Button>
+                <Button v-if="user && !isAdmin" as-child>
+                    <Link :href="trainerApplicationCreate()"
+                        >Предложить тренажёр</Link
+                    >
+                </Button>
+                <Button v-if="isAdmin" as-child variant="secondary">
                     <Link :href="adminTrainerCreate()">Добавить</Link>
                 </Button>
             </template>

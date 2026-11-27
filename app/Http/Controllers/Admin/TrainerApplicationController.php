@@ -37,11 +37,17 @@ class TrainerApplicationController extends Controller
     {
         abort_unless($task->status === TaskStatus::CREATED, 404);
 
-        $task->update([
-            'status' => TaskStatus::APPROVED,
-            'reference_code' => $request->string('reference_code')->toString(),
-            'answer' => $request->string('answer')->toString(),
-        ]);
+        $updates = ['status' => TaskStatus::APPROVED];
+
+        if ($request->filled('reference_code')) {
+            $updates['reference_code'] = $request->string('reference_code')->toString();
+        }
+
+        if ($request->filled('answer')) {
+            $updates['answer'] = $request->string('answer')->toString();
+        }
+
+        $task->update($updates);
 
         Inertia::flash('toast', [
             'type' => 'success',

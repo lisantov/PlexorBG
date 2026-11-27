@@ -98,45 +98,66 @@ const formatDate = (value: string | null) =>
                 v-bind="
                     TrainerApplicationController.approve.form(application.id)
                 "
-                class="space-y-4 border-b border-border pb-6"
-                v-slot="{ errors, processing }"
+                class="border-b border-border pb-6"
+                v-slot="{ processing }"
             >
-                <div class="grid gap-2">
-                    <Label for="reference_code">Эталонное решение (код)</Label>
-                    <p class="text-muted-foreground text-xs">
-                        Можно отредактировать перед публикацией.
-                    </p>
-                    <textarea
-                        id="reference_code"
-                        name="reference_code"
-                        required
-                        rows="10"
-                        class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
-                        :default-value="application.reference_code"
-                    />
-                    <InputError :message="errors.reference_code" />
-                </div>
-
-                <div class="grid gap-2">
-                    <Label for="answer">Эталонный ответ</Label>
-                    <p class="text-muted-foreground text-xs">
-                        Можно отредактировать перед публикацией.
-                    </p>
-                    <textarea
-                        id="answer"
-                        name="answer"
-                        required
-                        rows="4"
-                        class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
-                        :default-value="application.answer"
-                    />
-                    <InputError :message="errors.answer" />
-                </div>
-
                 <Button type="submit" :disabled="processing">
                     Одобрить и опубликовать
                 </Button>
+                <p class="text-muted-foreground mt-2 text-xs">
+                    Публикуются эталонный код и ответ из заявки без изменений.
+                </p>
             </Form>
+
+            <details class="group rounded-md border border-border text-sm">
+                <summary
+                    class="cursor-pointer list-none px-4 py-3 font-medium marker:content-none [&::-webkit-details-marker]:hidden"
+                >
+                    Изменить эталоны перед публикацией
+                    <span class="text-muted-foreground ml-2 text-xs font-normal"
+                        >необязательно</span
+                    >
+                </summary>
+                <Form
+                    v-bind="
+                        TrainerApplicationController.approve.form(
+                            application.id,
+                        )
+                    "
+                    class="space-y-4 border-t border-border px-4 py-4"
+                    v-slot="{ errors, processing }"
+                >
+                    <div class="grid gap-2">
+                        <Label for="reference_code"
+                            >Эталонное решение (код)</Label
+                        >
+                        <textarea
+                            id="reference_code"
+                            name="reference_code"
+                            rows="10"
+                            class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
+                            >{{ application.reference_code }}</textarea
+                        >
+                        <InputError :message="errors.reference_code" />
+                    </div>
+
+                    <div class="grid gap-2">
+                        <Label for="answer">Эталонный ответ</Label>
+                        <textarea
+                            id="answer"
+                            name="answer"
+                            rows="4"
+                            class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
+                            >{{ application.answer }}</textarea
+                        >
+                        <InputError :message="errors.answer" />
+                    </div>
+
+                    <Button type="submit" variant="secondary" :disabled="processing">
+                        Одобрить с правками
+                    </Button>
+                </Form>
+            </details>
 
             <Form
                 v-bind="

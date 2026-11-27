@@ -17,8 +17,8 @@ class ApproveTrainerApplicationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'reference_code' => ['required', 'string'],
-            'answer' => ['required', 'string'],
+            'reference_code' => ['sometimes', 'nullable', 'string'],
+            'answer' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

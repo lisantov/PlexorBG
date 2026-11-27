@@ -55,7 +55,36 @@ class TrainerApplicationTest extends TestCase
         ]);
     }
 
-    public function test_admin_can_approve_application(): void
+    public function test_admin_can_approve_application_without_changes(): void
+    {
+        $adminRole = Role::factory()->create(['name' => 'Admin']);
+        $userRole = Role::factory()->create(['name' => 'User']);
+        $admin = User::factory()->create(['role_id' => $adminRole->id]);
+        $author = User::factory()->create(['role_id' => $userRole->id]);
+
+        $task = Task::query()->create([
+            'user_id' => $author->id,
+            'title' => 'Pending task',
+            'description' => 'Desc',
+            'content' => 'Do work',
+            'reference_code' => 'print("ok")',
+            'answer' => 'ok',
+            'status' => TaskStatus::CREATED,
+        ]);
+
+        $response = $this->actingAs($admin)->post(
+            route('admin.trainer-applications.approve', $task),
+        );
+
+        $response->assertRedirect(route('admin.index', ['tab' => 'applications']));
+
+        $task->refresh();
+        $this->assertSame(TaskStatus::APPROVED, $task->status);
+        $this->assertSame('print("ok")', $task->reference_code);
+        $this->assertSame('ok', $task->answer);
+    }
+
+    public function test_admin_can_approve_application_with_edits(): void
     {
         $adminRole = Role::factory()->create(['name' => 'Admin']);
         $userRole = Role::factory()->create(['name' => 'User']);

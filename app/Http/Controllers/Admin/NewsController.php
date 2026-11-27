@@ -30,7 +30,7 @@ class NewsController extends Controller
             'message' => 'Новость опубликована.',
         ]);
 
-        return to_route('news.index');
+        return to_route('admin.index', ['tab' => 'news']);
     }
 
     public function edit(News $news): Response
@@ -56,7 +56,7 @@ class NewsController extends Controller
             'message' => 'Новость обновлена.',
         ]);
 
-        return to_route('news.index');
+        return to_route('admin.index', ['tab' => 'news']);
     }
 
     public function destroy(News $news): RedirectResponse
@@ -68,6 +68,6 @@ class NewsController extends Controller
             'message' => 'Новость удалена.',
         ]);
 
-        return to_route('news.index');
+        return to_route('admin.index', ['tab' => 'news']);
     }
 }

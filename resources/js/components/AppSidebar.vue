@@ -10,8 +10,7 @@ import {
     User,
 } from '@lucide/vue';
 import { computed } from 'vue';
-import { create as adminNewsCreate } from '@/routes/admin/news';
-import { create as adminTrainerCreate } from '@/routes/admin/trainers';
+import { index as adminIndex } from '@/routes/admin';
 import AppLogo from '@/components/AppLogo.vue';
 import NavFooter from '@/components/NavFooter.vue';
 import NavMain from '@/components/NavMain.vue';
@@ -58,18 +57,11 @@ const mainNavItems = computed<NavItem[]>(() => {
     ];
 
     if (page.props.auth.isAdmin) {
-        items.push(
-            {
-                title: 'Админ: новость',
-                href: adminNewsCreate(),
-                icon: Shield,
-            },
-            {
-                title: 'Админ: тренажёр',
-                href: adminTrainerCreate(),
-                icon: Shield,
-            },
-        );
+        items.push({
+            title: 'Админ',
+            href: adminIndex(),
+            icon: Shield,
+        });
     }
 
     return items;

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { Form, Head, Link } from '@inertiajs/vue3';
 import TrainerController from '@/actions/App/Http/Controllers/Admin/TrainerController';
+import ConfirmDeleteDialog from '@/components/ConfirmDeleteDialog.vue';
 import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { show } from '@/routes/trainers';
+import { index as adminIndex } from '@/routes/admin';
 import type { TrainerAdminFields } from '@/types/trainer';
 
 type Props = {
@@ -79,7 +80,7 @@ const props = defineProps<Props>();
             <div class="flex gap-4">
                 <Button type="submit" :disabled="processing">Сохранить</Button>
                 <Link
-                    :href="show(trainer.id)"
+                    :href="adminIndex({ query: { tab: 'trainers' } })"
                     class="py-2 text-sm underline"
                 >
                     Отмена
@@ -87,24 +88,10 @@ const props = defineProps<Props>();
             </div>
         </Form>
 
-        <Form
-            v-bind="TrainerController.destroy.form(props.trainer.id)"
-            v-slot="{ processing }"
-            @submit="
-                (event) => {
-                    if (!confirm('Удалить тренажёр?')) {
-                        event.preventDefault();
-                    }
-                }
-            "
-        >
-            <Button
-                type="submit"
-                variant="destructive"
-                :disabled="processing"
-            >
-                Удалить
-            </Button>
-        </Form>
+        <ConfirmDeleteDialog
+            :form="TrainerController.destroy.form(props.trainer.id)"
+            title="Удалить тренажёр?"
+            :description="`«${trainer.title}» будет удалён безвозвратно.`"
+        />
     </div>
 </template>

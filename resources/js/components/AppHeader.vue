@@ -9,8 +9,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { useCurrentUrl } from '@/composables/useCurrentUrl';
-import { create as adminNewsCreate } from '@/routes/admin/news';
-import { create as adminTrainerCreate } from '@/routes/admin/trainers';
+import { index as adminIndex } from '@/routes/admin';
 import { home, login, register } from '@/routes';
 import { index as news } from '@/routes/news';
 import { index as trainers } from '@/routes/trainers';
@@ -44,17 +43,10 @@ const navLinkClass = (href: LinkComponentBaseProps['href']) =>
                 </Link>
                 <Link
                     v-if="auth.isAdmin"
-                    :href="adminNewsCreate()"
-                    :class="navLinkClass(adminNewsCreate())"
+                    :href="adminIndex()"
+                    :class="navLinkClass(adminIndex())"
                 >
-                    + Новость
-                </Link>
-                <Link
-                    v-if="auth.isAdmin"
-                    :href="adminTrainerCreate()"
-                    :class="navLinkClass(adminTrainerCreate())"
-                >
-                    + Тренажёр
+                    Админ
                 </Link>
             </nav>
 
@@ -98,11 +90,8 @@ const navLinkClass = (href: LinkComponentBaseProps['href']) =>
                         <Link :href="home()">Главная</Link>
                         <Link :href="news()">Новости</Link>
                         <Link :href="trainers()">Тренажёры</Link>
-                        <Link v-if="auth.isAdmin" :href="adminNewsCreate()">
-                            + Новость
-                        </Link>
-                        <Link v-if="auth.isAdmin" :href="adminTrainerCreate()">
-                            + Тренажёр
+                        <Link v-if="auth.isAdmin" :href="adminIndex()">
+                            Админ
                         </Link>
                     </div>
                 </details>

@@ -34,7 +34,7 @@ class TrainerController extends Controller
             'message' => 'Тренажёр опубликован.',
         ]);
 
-        return to_route('trainers.index');
+        return to_route('admin.index', ['tab' => 'trainers']);
     }
 
     public function edit(Task $task): Response
@@ -64,7 +64,7 @@ class TrainerController extends Controller
             'message' => 'Тренажёр обновлён.',
         ]);
 
-        return to_route('trainers.show', $task);
+        return to_route('admin.index', ['tab' => 'trainers']);
     }
 
     public function destroy(Task $task): RedirectResponse
@@ -76,6 +76,6 @@ class TrainerController extends Controller
             'message' => 'Тренажёр удалён.',
         ]);
 
-        return to_route('trainers.index');
+        return to_route('admin.index', ['tab' => 'trainers']);
     }
 }

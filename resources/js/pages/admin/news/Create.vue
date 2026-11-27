@@ -5,7 +5,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { index as newsIndex } from '@/routes/news';
+import { index as adminIndex } from '@/routes/admin';
 </script>
 
 <template>
@@ -39,7 +39,10 @@ import { index as newsIndex } from '@/routes/news';
 
             <div class="flex gap-4">
                 <Button type="submit" :disabled="processing">Сохранить</Button>
-                <Link :href="newsIndex()" class="py-2 text-sm underline">
+                <Link
+                    :href="adminIndex({ query: { tab: 'news' } })"
+                    class="py-2 text-sm underline"
+                >
                     Отмена
                 </Link>
             </div>

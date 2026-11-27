@@ -5,7 +5,7 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { index as trainersIndex } from '@/routes/trainers';
+import { index as adminIndex } from '@/routes/admin';
 </script>
 
 <template>
@@ -67,7 +67,10 @@ import { index as trainersIndex } from '@/routes/trainers';
                 <Button type="submit" :disabled="processing">
                     Опубликовать
                 </Button>
-                <Link :href="trainersIndex()" class="py-2 text-sm underline">
+                <Link
+                    :href="adminIndex({ query: { tab: 'trainers' } })"
+                    class="py-2 text-sm underline"
+                >
                     Отмена
                 </Link>
             </div>

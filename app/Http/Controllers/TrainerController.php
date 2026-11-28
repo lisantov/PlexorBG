@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enums\TaskStatus;
 use App\Models\Commentary;
+use App\Models\Solution;
 use App\Models\Task;
 use App\Support\TitleSearch;
 use Illuminate\Http\Request;
@@ -68,13 +69,49 @@ class TrainerController extends Controller
             );
         }
 
+        $tab = $request->string('tab')->toString();
+        if (! in_array($tab, ['task', 'solutions', 'comments'], true)) {
+            $tab = 'task';
+        }
+
         $flat = Commentary::query()
             ->whereMorphedTo('commentable', $task)
             ->with('user:id,login')
             ->orderBy('created_at')
             ->get();
 
+        $solutions = Solution::query()
+            ->where('task_id', $task->id)
+            ->with('user:id,login')
+            ->withCount('comments')
+            ->withLikeMeta($request->user())
+            ->latest()
+            ->get();
+
+        $commentsBySolution = Commentary::query()
+            ->where('commentable_type', Solution::class)
+            ->whereIn('commentable_id', $solutions->pluck('id'))
+            ->with('user:id,login')
+            ->orderBy('created_at')
+            ->get()
+            ->groupBy('commentable_id');
+
+        $solutions = $solutions->map(function (Solution $solution) use ($commentsBySolution) {
+            $flat = $commentsBySolution->get($solution->id, collect());
+
+            return [
+                'id' => $solution->id,
+                'author' => $solution->user?->login,
+                'code' => $solution->code,
+                'created_at' => $solution->created_at?->toIso8601String(),
+                'comments' => Commentary::toTree($flat),
+                'comments_count' => $flat->count(),
+                ...$solution->likeProps(),
+            ];
+        });
+
         return Inertia::render('trainers/Show', [
+            'tab' => $tab,
             'trainer' => [
                 'id' => $task->id,
                 'title' => $task->title,
@@ -83,6 +120,8 @@ class TrainerController extends Controller
                 'created_at' => $task->created_at?->toIso8601String(),
                 ...$task->likeProps(),
             ],
+            'solutions' => $solutions,
+            'solutions_count' => $solutions->count(),
             'comments' => Commentary::toTree($flat),
             'comments_count' => $flat->count(),
         ]);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Form, Head, Link } from '@inertiajs/vue3';
+import { Form, Head, Link, router } from '@inertiajs/vue3';
 import TrainerApplicationController from '@/actions/App/Http/Controllers/Admin/TrainerApplicationController';
 import InputError from '@/components/InputError.vue';
 import PageContainer from '@/components/layout/PageContainer.vue';
@@ -25,7 +25,13 @@ type Props = {
     application: Application;
 };
 
-defineProps<Props>();
+const props = defineProps<Props>();
+
+const rejectApplication = () => {
+    router.post(
+        TrainerApplicationController.reject.url(props.application.id),
+    );
+};
 
 const formatDate = (value: string | null) =>
     value ? new Date(value).toLocaleString() : '—';
@@ -98,87 +104,75 @@ const formatDate = (value: string | null) =>
                 v-bind="
                     TrainerApplicationController.approve.form(application.id)
                 "
-                class="border-b border-border pb-6"
-                v-slot="{ processing }"
+                class="space-y-4"
+                v-slot="{ errors, processing }"
             >
-                <Button type="submit" :disabled="processing">
-                    Одобрить и опубликовать
-                </Button>
-                <p class="text-muted-foreground mt-2 text-xs">
-                    Публикуются эталонный код и ответ из заявки без изменений.
+                <p class="text-muted-foreground text-xs">
+                    При необходимости поправьте эталоны перед публикацией —
+                    можно оставить как в заявке.
                 </p>
-            </Form>
 
-            <details class="group rounded-md border border-border text-sm">
-                <summary
-                    class="cursor-pointer list-none px-4 py-3 font-medium marker:content-none [&::-webkit-details-marker]:hidden"
-                >
-                    Изменить эталоны перед публикацией
-                    <span class="text-muted-foreground ml-2 text-xs font-normal"
-                        >необязательно</span
+                <div class="grid gap-2">
+                    <Label for="reference_code"
+                        >Эталонное решение (код)
+                        <span class="text-muted-foreground font-normal"
+                            >(необязательно)</span
+                        ></Label
                     >
-                </summary>
-                <Form
-                    v-bind="
-                        TrainerApplicationController.approve.form(
-                            application.id,
-                        )
-                    "
-                    class="space-y-4 border-t border-border px-4 py-4"
-                    v-slot="{ errors, processing }"
+                    <textarea
+                        id="reference_code"
+                        name="reference_code"
+                        rows="10"
+                        class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
+                        >{{ application.reference_code }}</textarea
+                    >
+                    <InputError :message="errors.reference_code" />
+                </div>
+
+                <div class="grid gap-2">
+                    <Label for="answer"
+                        >Эталонный ответ
+                        <span class="text-muted-foreground font-normal"
+                            >(необязательно)</span
+                        ></Label
+                    >
+                    <textarea
+                        id="answer"
+                        name="answer"
+                        rows="4"
+                        class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
+                        >{{ application.answer }}</textarea
+                    >
+                    <InputError :message="errors.answer" />
+                </div>
+
+                <div
+                    class="flex flex-wrap gap-3 border-t border-border pt-6"
                 >
-                    <div class="grid gap-2">
-                        <Label for="reference_code"
-                            >Эталонное решение (код)</Label
-                        >
-                        <textarea
-                            id="reference_code"
-                            name="reference_code"
-                            rows="10"
-                            class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
-                            >{{ application.reference_code }}</textarea
-                        >
-                        <InputError :message="errors.reference_code" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="answer">Эталонный ответ</Label>
-                        <textarea
-                            id="answer"
-                            name="answer"
-                            rows="4"
-                            class="w-full rounded-md border border-border bg-background p-2 font-mono text-sm"
-                            >{{ application.answer }}</textarea
-                        >
-                        <InputError :message="errors.answer" />
-                    </div>
-
-                    <Button type="submit" variant="secondary" :disabled="processing">
-                        Одобрить с правками
+                    <Button type="submit" :disabled="processing">
+                        Одобрить и опубликовать
                     </Button>
-                </Form>
-            </details>
 
-            <Form
-                v-bind="
-                    TrainerApplicationController.reject.form(application.id)
-                "
-                v-slot="{ processing }"
-            >
-                <Button
-                    type="submit"
-                    variant="destructive"
-                    :disabled="processing"
-                >
-                    Отклонить заявку
-                </Button>
+                    <Button
+                        type="button"
+                        variant="destructive"
+                        :disabled="processing"
+                        @click="rejectApplication"
+                    >
+                        Отклонить заявку
+                    </Button>
+
+                    <Button as-child variant="outline">
+                        <Link
+                            :href="
+                                adminIndex({ query: { tab: 'applications' } })
+                            "
+                        >
+                            Назад к заявкам
+                        </Link>
+                    </Button>
+                </div>
             </Form>
-
-            <Button as-child variant="outline">
-                <Link :href="adminIndex({ query: { tab: 'applications' } })">
-                    Назад к заявкам
-                </Link>
-            </Button>
         </PagePanel>
     </PageContainer>
 </template>

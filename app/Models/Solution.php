@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\Likeable;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 class Solution extends Model
 {
     use HasUuids;
+    use Likeable;
 
     public function user(): BelongsTo
     {

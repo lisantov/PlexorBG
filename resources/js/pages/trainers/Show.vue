@@ -11,12 +11,24 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { login } from '@/routes';
 import { edit } from '@/routes/admin/trainers';
-import { index as trainersIndex } from '@/routes/trainers';
+import {
+    index as trainersIndex,
+    show as trainerShow,
+    solve as trainerSolve,
+} from '@/routes/trainers';
 import type { CommentNode } from '@/types/comment';
+import TrainerSolutionCard from '@/components/trainers/TrainerSolutionCard.vue';
+import type {
+    TrainerShowTab,
+    TrainerSolutionListItem,
+} from '@/types/trainer-solution';
 import type { TrainerDetail } from '@/types/trainer';
 
 type Props = {
+    tab: TrainerShowTab;
     trainer: TrainerDetail;
+    solutions: TrainerSolutionListItem[];
+    solutions_count: number;
     comments: CommentNode[];
     comments_count: number;
 };
@@ -29,6 +41,17 @@ const isAdmin = computed(() => page.props.auth.isAdmin);
 const commentForm = computed(() =>
     TrainerCommentaryController.store.form(props.trainer.id),
 );
+
+const tabLinkClass = (active: boolean) =>
+    [
+        'border-b-2 px-1 pb-2 text-sm transition-colors',
+        active
+            ? 'border-primary text-primary font-medium'
+            : 'border-transparent text-muted-foreground hover:text-foreground',
+    ];
+
+const tabHref = (value: TrainerShowTab) =>
+    trainerShow(props.trainer.id, { query: { tab: value } });
 </script>
 
 <template>
@@ -59,37 +82,88 @@ const commentForm = computed(() =>
                     "
                 />
             </div>
+        </PagePanel>
+
+        <nav class="mb-8 flex flex-wrap gap-6 border-b-2 border-border/80">
+            <Link :href="tabHref('task')" :class="tabLinkClass(tab === 'task')">
+                Задача
+            </Link>
+            <Link
+                :href="tabHref('solutions')"
+                :class="tabLinkClass(tab === 'solutions')"
+            >
+                Решения ({{ solutions_count }})
+            </Link>
+            <Link
+                :href="tabHref('comments')"
+                :class="tabLinkClass(tab === 'comments')"
+            >
+                Комментарии ({{ comments_count }})
+            </Link>
+        </nav>
+
+        <PagePanel v-if="tab === 'task'" class="mb-8 space-y-5">
             <section
                 class="rounded-xl border-2 border-border/80 bg-background/50 p-5 text-base leading-relaxed whitespace-pre-wrap"
             >
                 {{ trainer.content }}
             </section>
-            <Link
-                v-if="isAdmin"
-                :href="edit(trainer.id)"
-                class="text-muted-foreground text-sm underline hover:text-primary"
+            <div class="flex flex-wrap items-center gap-3">
+                <Button v-if="user" as-child>
+                    <Link :href="trainerSolve(trainer.id)">Решить задачу</Link>
+                </Button>
+                <p v-else class="text-muted-foreground text-sm">
+                    <Link :href="login()" class="underline">Войдите</Link>, чтобы
+                    решать задачу.
+                </p>
+                <Link
+                    v-if="isAdmin"
+                    :href="edit(trainer.id)"
+                    class="text-muted-foreground text-sm underline hover:text-primary"
+                >
+                    Редактировать
+                </Link>
+            </div>
+        </PagePanel>
+
+        <PagePanel v-else-if="tab === 'solutions'" class="space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <p class="text-muted-foreground text-sm">
+                    Все отправленные решения по этому тренажёру.
+                </p>
+                <Button v-if="user" as-child variant="secondary" size="sm">
+                    <Link :href="trainerSolve(trainer.id)">Решить снова</Link>
+                </Button>
+            </div>
+
+            <p
+                v-if="solutions.length === 0"
+                class="text-muted-foreground border border-border px-4 py-8 text-center text-sm"
             >
-                Редактировать
-            </Link>
-        </PagePanel>
-
-        <PagePanel class="mb-8 space-y-4">
-            <h2 class="text-lg font-semibold">Сессия</h2>
-            <p class="text-muted-foreground text-sm">
-                Отправка решения подключится позже.
+                Пока нет отправленных решений.
+                <Link
+                    v-if="user"
+                    :href="trainerSolve(trainer.id)"
+                    class="text-primary ml-1 underline"
+                >
+                    Стать первым
+                </Link>
             </p>
-            <textarea
-                class="min-h-48 w-full rounded-xl border-2 border-border bg-background p-4 font-mono text-sm"
-                placeholder="// решение"
-                disabled
-            />
+
+            <ul
+                v-else
+                class="divide-y divide-border border border-border text-sm"
+            >
+                <TrainerSolutionCard
+                    v-for="item in solutions"
+                    :key="item.id"
+                    :solution="item"
+                    :can-interact="!!user"
+                />
+            </ul>
         </PagePanel>
 
-        <PagePanel class="space-y-6">
-            <h2 class="text-xl font-semibold">
-                Комментарии ({{ comments_count }})
-            </h2>
-
+        <PagePanel v-else class="space-y-6">
             <CommentThread
                 v-if="comments.length"
                 :comments="comments"

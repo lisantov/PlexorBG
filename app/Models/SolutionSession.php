@@ -11,10 +11,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Table(key: 'id', keyType: 'string', incrementing: false)]
-#[Fillable(['task_id', 'status', 'payload'])]
+#[Fillable(['user_id', 'task_id', 'status', 'payload'])]
 class SolutionSession extends Model
 {
     use HasUuids;
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     public function task(): BelongsTo
     {

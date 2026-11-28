@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
 class EnsureUserIsAdmin
@@ -16,7 +17,16 @@ class EnsureUserIsAdmin
         $user = $request->user();
 
         if ($user === null || ! $user->isAdmin()) {
-            abort(403);
+            if ($request->expectsJson()) {
+                abort(403);
+            }
+
+            Inertia::flash('toast', [
+                'type' => 'error',
+                'message' => 'Нет доступа к админ-панели.',
+            ]);
+
+            return redirect()->route('home');
         }
 
         return $next($request);
